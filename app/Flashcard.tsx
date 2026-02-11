@@ -108,17 +108,17 @@ export default function WorldHeritageApp() {
 
   if (showResult) {
     return (
-      <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-6 text-[#333333]">
+      <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-6 text-[#000000]">
         <div className="w-full max-w-md bg-white p-10 rounded-lg shadow-sm border border-[#e6e4dc] text-center relative overflow-hidden">
-          <img src="/12-13.PNG" className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none" alt="" />
+          <img src="/12-13.PNG" className="absolute inset-0 w-full h-full object-contain opacity-5 pointer-events-none" alt="" />
           <div className="relative z-10">
-            <h2 className="text-lg font-medium mb-4">{isReviewMode ? '復習完了' : '学習完了'}</h2>
-            <p className="text-sm text-gray-500 mb-8">要復習の問題: {weakPointIds.length} 問</p>
+            <h2 className="text-xl font-bold mb-4">{isReviewMode ? '復習完了' : '学習完了'}</h2>
+            <p className="text-sm font-bold mb-8">要復習の問題: {weakPointIds.length} 問</p>
             <div className="space-y-3">
               {weakPointIds.length > 0 && (
-                <button onClick={startReview} className="w-full py-4 bg-[#7f7870] text-white rounded-md text-sm tracking-widest font-bold">間違えた問題だけ解き直す</button>
+                <button onClick={startReview} className="w-full py-4 bg-[#000000] text-white rounded-md text-sm tracking-widest font-bold">間違えた問題だけ解き直す</button>
               )}
-              <button onClick={resetNormal} className="w-full py-4 border border-[#e6e4dc] text-[#7f7870] rounded-md text-sm tracking-widest">全問題をシャッフルして再開</button>
+              <button onClick={resetNormal} className="w-full py-4 border-2 border-[#000000] text-[#000000] rounded-md text-sm tracking-widest font-bold">全問題をシャッフルして再開</button>
             </div>
           </div>
         </div>
@@ -129,51 +129,44 @@ export default function WorldHeritageApp() {
   const currentCard = cards[currentIndex];
 
   return (
-    <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center p-6 font-sans text-[#333333]">
+    <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center p-6 font-sans text-[#000000]">
       
-      {/* ステータスバー */}
-      <div className="mt-8 mb-12 w-full max-w-md flex justify-between items-end border-b border-[#e6e4dc] pb-2">
+      <div className="mt-8 mb-12 w-full max-w-md flex justify-between items-end border-b-2 border-[#000000] pb-2">
         <div className="flex flex-col">
-          <span className="text-[10px] tracking-[0.2em] text-gray-400 uppercase font-bold leading-none mb-1">{isReviewMode ? 'Review Mode' : 'Japan - Section 1'}</span>
-          {isReviewMode && <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest">Weak Point Focus</span>}
+          <span className="text-[10px] tracking-[0.2em] text-[#000000] uppercase font-black leading-none mb-1">{isReviewMode ? 'Review Mode' : 'Japan - Section 1'}</span>
+          {isReviewMode && <span className="text-[10px] text-red-600 font-black uppercase tracking-widest">Weak Point Focus</span>}
         </div>
-        <span className="text-sm font-light text-[#7f7870]">{currentIndex + 1} / {cards.length}</span>
+        <span className="text-sm font-bold text-[#000000]">{currentIndex + 1} / {cards.length}</span>
       </div>
 
-      {/* カード本体 */}
       <div className="relative w-full max-w-md h-[540px] cursor-pointer [perspective:1000px]" onClick={() => setIsFlipped(!isFlipped)}>
         <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
           
-          {/* 表面（問題） */}
-          <div className="absolute inset-0 w-full h-full bg-white rounded-lg border border-[#e6e4dc] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] shadow-sm overflow-hidden">
-            {/* カード内の背景画像 */}
+          {/* 表面（背景を完全な白に修正） */}
+          <div className="absolute inset-0 w-full h-full bg-[#ffffff] rounded-lg border-2 border-[#000000] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] shadow-md overflow-hidden">
             <img src="/12-13.PNG" alt="" className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none" />
-            
             <div className="relative z-10 w-full overflow-y-auto custom-scrollbar px-2">
-              <span className="block text-center text-[10px] tracking-widest text-[#bcbab2] font-bold uppercase mb-8">Question</span>
-              <p className="text-base font-light leading-relaxed text-center whitespace-pre-wrap">{currentCard.question}</p>
+              <span className="block text-center text-[10px] tracking-widest text-[#000000] font-black uppercase mb-8">Question</span>
+              <p className="text-lg font-bold leading-relaxed text-center whitespace-pre-wrap">{currentCard.question}</p>
             </div>
-            <p className="absolute bottom-8 text-[10px] text-[#bcbab2] tracking-widest uppercase animate-pulse">Tap to reveal</p>
+            <p className="absolute bottom-8 text-[10px] text-[#000000] font-bold tracking-widest uppercase animate-pulse">Tap to reveal</p>
           </div>
 
-          {/* 裏面（解答） */}
-          <div className="absolute inset-0 w-full h-full bg-white rounded-lg border border-[#e6e4dc] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] [transform:rotateY(180deg)] shadow-sm overflow-hidden">
-             {/* カード内の背景画像 */}
+          {/* 裏面（背景を完全な白に修正） */}
+          <div className="absolute inset-0 w-full h-full bg-[#ffffff] rounded-lg border-2 border-[#000000] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] [transform:rotateY(180deg)] shadow-md overflow-hidden">
              <img src="/12-13.PNG" alt="" className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none" />
-
             <div className="relative z-10 w-full overflow-y-auto max-h-[400px] pr-2 text-left custom-scrollbar">
-              <span className="block text-center text-[10px] tracking-widest text-[#bcbab2] font-bold uppercase mb-8">Answer</span>
-              <p className="text-sm font-normal leading-relaxed text-[#7f7870] whitespace-pre-wrap">{currentCard.answer}</p>
+              <span className="block text-center text-[10px] tracking-widest text-[#000000] font-black uppercase mb-8 border-b border-black pb-1">Answer & Explanation</span>
+              <p className="text-base font-bold leading-relaxed text-[#000000] whitespace-pre-wrap mt-4">{currentCard.answer}</p>
             </div>
           </div>
 
         </div>
       </div>
 
-      {/* ボタン */}
       <div className={`mt-12 w-full max-w-md grid grid-cols-2 gap-6 transition-all duration-500 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-        <button onClick={(e) => { e.stopPropagation(); handleAnswer(false); }} className="py-4 border border-red-100 bg-white rounded-md text-xs tracking-widest text-red-400 font-bold shadow-sm">わからなかった</button>
-        <button onClick={(e) => { e.stopPropagation(); handleAnswer(true); }} className="py-4 border border-green-100 bg-white rounded-md text-xs tracking-widest text-green-600 font-bold shadow-sm">正解</button>
+        <button onClick={(e) => { e.stopPropagation(); handleAnswer(false); }} className="py-4 border-2 border-red-600 bg-white rounded-md text-xs tracking-widest text-red-600 font-black shadow-sm">わからなかった</button>
+        <button onClick={(e) => { e.stopPropagation(); handleAnswer(true); }} className="py-4 border-2 border-green-600 bg-white rounded-md text-xs tracking-widest text-green-600 font-black shadow-sm">正解</button>
       </div>
     </div>
   );
