@@ -57,9 +57,9 @@ const WORLD_HERITAGE_DATA = [
 ];
 
 // 配列をシャッフルするユーティリティ
-const shuffleArray = (array: any[]) => [...array].sort(() => Math.random() - 0.5);
+const shuffle = (array: any[]) => [...array].sort(() => Math.random() - 0.5);
 
-function WorldHeritageApp() {
+export default function WorldHeritageApp() {
   const [cards, setCards] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -68,7 +68,7 @@ function WorldHeritageApp() {
   const [isReviewMode, setIsReviewMode] = useState(false);
 
   useEffect(() => {
-    setCards(shuffleArray(WORLD_HERITAGE_DATA));
+    setCards(shuffle(WORLD_HERITAGE_DATA));
   }, []);
 
   const handleAnswer = (isCorrect: boolean) => {
@@ -86,7 +86,7 @@ function WorldHeritageApp() {
   };
 
   const resetNormal = () => {
-    setCards(shuffleArray(WORLD_HERITAGE_DATA));
+    setCards(shuffle(WORLD_HERITAGE_DATA));
     setCurrentIndex(0);
     setIsFlipped(false);
     setShowResult(false);
@@ -96,8 +96,7 @@ function WorldHeritageApp() {
 
   const startReview = () => {
     const weakCards = WORLD_HERITAGE_DATA.filter(card => weakPointIds.includes(card.id));
-    if (weakCards.length === 0) return;
-    setCards(shuffleArray(weakCards));
+    setCards(shuffle(weakCards));
     setCurrentIndex(0);
     setIsFlipped(false);
     setShowResult(false);
@@ -110,14 +109,17 @@ function WorldHeritageApp() {
   if (showResult) {
     return (
       <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-6 text-[#333333]">
-        <div className="w-full max-w-md bg-white p-10 rounded-lg shadow-sm border border-[#e6e4dc] text-center">
-          <h2 className="text-lg font-medium mb-4">{isReviewMode ? '復習完了' : '学習完了'}</h2>
-          <p className="text-sm text-gray-500 mb-8">要復習の問題: {weakPointIds.length} 問</p>
-          <div className="space-y-3">
-            {weakPointIds.length > 0 && (
-              <button onClick={startReview} className="w-full py-4 bg-[#7f7870] text-white rounded-md text-sm tracking-widest font-bold shadow-md hover:bg-[#6b655d] transition-colors">間違えた問題だけ解き直す</button>
-            )}
-            <button onClick={resetNormal} className="w-full py-4 border border-[#e6e4dc] text-[#7f7870] rounded-md text-sm tracking-widest hover:bg-[#fcfbf9] transition-colors">全問題をシャッフルして再開</button>
+        <div className="w-full max-w-md bg-white p-10 rounded-lg shadow-sm border border-[#e6e4dc] text-center relative overflow-hidden">
+          <img src="/12-13.PNG" className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none" alt="" />
+          <div className="relative z-10">
+            <h2 className="text-lg font-medium mb-4">{isReviewMode ? '復習完了' : '学習完了'}</h2>
+            <p className="text-sm text-gray-500 mb-8">要復習の問題: {weakPointIds.length} 問</p>
+            <div className="space-y-3">
+              {weakPointIds.length > 0 && (
+                <button onClick={startReview} className="w-full py-4 bg-[#7f7870] text-white rounded-md text-sm tracking-widest font-bold">間違えた問題だけ解き直す</button>
+              )}
+              <button onClick={resetNormal} className="w-full py-4 border border-[#e6e4dc] text-[#7f7870] rounded-md text-sm tracking-widest">全問題をシャッフルして再開</button>
+            </div>
           </div>
         </div>
       </div>
@@ -128,46 +130,51 @@ function WorldHeritageApp() {
 
   return (
     <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center p-6 font-sans text-[#333333]">
+      
+      {/* ステータスバー */}
       <div className="mt-8 mb-12 w-full max-w-md flex justify-between items-end border-b border-[#e6e4dc] pb-2">
         <div className="flex flex-col">
           <span className="text-[10px] tracking-[0.2em] text-gray-400 uppercase font-bold leading-none mb-1">{isReviewMode ? 'Review Mode' : 'Japan - Section 1'}</span>
-          {isReviewMode && <span className="text-[9px] text-red-400 font-bold uppercase tracking-wider">Focusing on Weak Points</span>}
+          {isReviewMode && <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest">Weak Point Focus</span>}
         </div>
-        <span className="text-sm font-light text-[#7f7870]">{currentIndex + 1} <span className="mx-1 text-gray-300">/</span> {cards.length}</span>
+        <span className="text-sm font-light text-[#7f7870]">{currentIndex + 1} / {cards.length}</span>
       </div>
 
+      {/* カード本体 */}
       <div className="relative w-full max-w-md h-[540px] cursor-pointer [perspective:1000px]" onClick={() => setIsFlipped(!isFlipped)}>
         <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
-          <div className="absolute inset-0 w-full h-full bg-white rounded-lg border border-[#e6e4dc] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] shadow-[0_4px_12px_rgba(0,0,0,0.02)] overflow-hidden">
-            <span className="absolute top-8 text-[10px] tracking-[0.3em] text-[#bcbab2] font-bold uppercase">Question</span>
-            <div className="w-full overflow-y-auto custom-scrollbar px-2">
+          
+          {/* 表面（問題） */}
+          <div className="absolute inset-0 w-full h-full bg-white rounded-lg border border-[#e6e4dc] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] shadow-sm overflow-hidden">
+            {/* カード内の背景画像 */}
+            <img src="/12-13.PNG" alt="" className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none" />
+            
+            <div className="relative z-10 w-full overflow-y-auto custom-scrollbar px-2">
+              <span className="block text-center text-[10px] tracking-widest text-[#bcbab2] font-bold uppercase mb-8">Question</span>
               <p className="text-base font-light leading-relaxed text-center whitespace-pre-wrap">{currentCard.question}</p>
             </div>
-            <p className="absolute bottom-8 text-[10px] text-[#bcbab2] tracking-[0.4em] animate-pulse uppercase">Tap to reveal</p>
+            <p className="absolute bottom-8 text-[10px] text-[#bcbab2] tracking-widest uppercase animate-pulse">Tap to reveal</p>
           </div>
-          <div className="absolute inset-0 w-full h-full bg-white rounded-lg border border-[#e6e4dc] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] [transform:rotateY(180deg)] shadow-[0_4px_12px_rgba(0,0,0,0.02)] overflow-hidden">
-            <span className="absolute top-8 text-[10px] tracking-[0.2em] text-[#bcbab2] font-bold uppercase">Answer & Explanation</span>
-            <div className="w-full overflow-y-auto max-h-[420px] pr-2 custom-scrollbar text-left">
+
+          {/* 裏面（解答） */}
+          <div className="absolute inset-0 w-full h-full bg-white rounded-lg border border-[#e6e4dc] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] [transform:rotateY(180deg)] shadow-sm overflow-hidden">
+             {/* カード内の背景画像 */}
+             <img src="/12-13.PNG" alt="" className="absolute inset-0 w-full h-full object-contain opacity-15 pointer-events-none" />
+
+            <div className="relative z-10 w-full overflow-y-auto max-h-[400px] pr-2 text-left custom-scrollbar">
+              <span className="block text-center text-[10px] tracking-widest text-[#bcbab2] font-bold uppercase mb-8">Answer</span>
               <p className="text-sm font-normal leading-relaxed text-[#7f7870] whitespace-pre-wrap">{currentCard.answer}</p>
             </div>
           </div>
+
         </div>
       </div>
 
-      <div className={`mt-10 w-full max-w-md grid grid-cols-2 gap-6 transition-all duration-500 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-        <button onClick={(e) => { e.stopPropagation(); handleAnswer(false); }} className="py-4 border border-red-100 bg-white rounded-md text-xs tracking-[0.3em] text-red-400 font-bold shadow-sm hover:bg-red-50 transition-colors uppercase">わからなかった</button>
-        <button onClick={(e) => { e.stopPropagation(); handleAnswer(true); }} className="py-4 border border-green-100 bg-white rounded-md text-xs tracking-[0.3em] text-green-600 font-bold shadow-sm hover:bg-green-50 transition-colors uppercase">正解</button>
+      {/* ボタン */}
+      <div className={`mt-12 w-full max-w-md grid grid-cols-2 gap-6 transition-all duration-500 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+        <button onClick={(e) => { e.stopPropagation(); handleAnswer(false); }} className="py-4 border border-red-100 bg-white rounded-md text-xs tracking-widest text-red-400 font-bold shadow-sm">わからなかった</button>
+        <button onClick={(e) => { e.stopPropagation(); handleAnswer(true); }} className="py-4 border border-green-100 bg-white rounded-md text-xs tracking-widest text-green-600 font-bold shadow-sm">正解</button>
       </div>
-      {!isFlipped && (
-        <div className="mt-10 flex items-center gap-2">
-          <div className="w-1 h-1 rounded-full bg-[#bcbab2]"></div>
-          <p className="text-[#bcbab2] text-[9px] tracking-[0.4em] uppercase font-medium">Recall the answer before flipping</p>
-          <div className="w-1 h-1 rounded-full bg-[#bcbab2]"></div>
-        </div>
-      )}
     </div>
   );
 }
-
-// ここで一括エクスポート
-export default WorldHeritageApp;
