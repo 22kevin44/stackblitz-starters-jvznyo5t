@@ -109,13 +109,13 @@ export default function WorldHeritageApp() {
   if (showResult) {
     return (
       <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-6 text-[#000000]">
-        <div className="w-full max-w-md bg-white p-10 rounded-lg shadow-sm border border-[#e6e4dc] text-center relative">
+        <div className="w-full max-w-md bg-white p-10 rounded-lg shadow-sm border border-[#e6e4dc] text-center">
           <h2 className="text-xl font-bold mb-4">{isReviewMode ? '復習完了' : '学習完了'}</h2>
           <div className="space-y-3">
             {weakPointIds.length > 0 && (
               <button onClick={startReview} className="w-full py-4 bg-[#000000] text-white rounded-md text-sm font-bold">間違えた問題だけ解き直す</button>
             )}
-            <button onClick={resetNormal} className="w-full py-4 border-2 border-[#000000] text-[#000000] rounded-md text-sm font-bold">全問題を再開</button>
+            <button onClick={resetNormal} className="w-full py-4 border-2 border-[#000000] text-[#000000] rounded-md text-sm font-bold">最初からやり直す</button>
           </div>
         </div>
       </div>
@@ -126,52 +126,44 @@ export default function WorldHeritageApp() {
 
   return (
     <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center p-6 font-sans text-[#000000]">
-      
-      {/* ヘッダー */}
       <div className="mt-8 mb-12 w-full max-w-md flex justify-between items-end border-b-2 border-[#000000] pb-2">
-        <div className="flex flex-col">
-          <span className="text-[10px] tracking-[0.2em] font-black">{isReviewMode ? 'Review Mode' : 'Japan - Section 1'}</span>
-        </div>
+        <span className="text-[10px] tracking-[0.2em] font-black">{isReviewMode ? 'Review Mode' : 'Japan - Section 1'}</span>
         <span className="text-sm font-bold">{currentIndex + 1} / {cards.length}</span>
       </div>
 
-      {/* カードコンテナ */}
-      <div className="relative w-full max-w-md h-[540px] cursor-pointer" style={{ perspective: '1200px' }} onClick={() => setIsFlipped(!isFlipped)}>
-        <div className={`relative w-full h-full transition-transform duration-500`} style={{ transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
+      <div className="relative w-full max-w-md h-[540px]" style={{ perspective: '1200px' }} onClick={() => setIsFlipped(!isFlipped)}>
+        <div className="relative w-full h-full transition-transform duration-500" style={{ transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
           
           {/* 表面 (Question) */}
-          <div className="absolute inset-0 w-full h-full bg-white rounded-lg border-2 border-black flex flex-col items-center justify-center p-10 shadow-md" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
-            {/* 背景キャラクター */}
+          {/* !isFlipped の時だけ不透明度を1にする (裏返した時は0にして完全に消す) */}
+          <div className={`absolute inset-0 w-full h-full bg-white rounded-lg border-2 border-black flex flex-col items-center justify-center p-10 shadow-md ${isFlipped ? 'opacity-0' : 'opacity-100'}`} style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', zIndex: isFlipped ? 0 : 10 }}>
             <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
               <img src="/12-13.PNG" alt="" className="w-full h-full object-contain" />
             </div>
-            {/* テキスト */}
-            <div className="relative z-10 w-full overflow-y-auto">
-              <span className="block text-center text-[10px] font-black uppercase mb-8">Question</span>
-              <p className="text-lg font-bold leading-relaxed text-center whitespace-pre-wrap">{currentCard.question}</p>
+            <div className="relative z-10 w-full overflow-y-auto text-center">
+              <span className="block text-[10px] font-black uppercase mb-8">Question</span>
+              <p className="text-lg font-bold leading-relaxed whitespace-pre-wrap">{currentCard.question}</p>
             </div>
           </div>
 
           {/* 裏面 (Answer) */}
-          <div className="absolute inset-0 w-full h-full bg-white rounded-lg border-2 border-black flex flex-col items-center justify-center p-10 shadow-md" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-            {/* 背景キャラクター */}
+          {/* isFlipped の時だけ不透明度を1にする */}
+          <div className={`absolute inset-0 w-full h-full bg-white rounded-lg border-2 border-black flex flex-col items-center justify-center p-10 shadow-md ${isFlipped ? 'opacity-100' : 'opacity-0'}`} style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)', zIndex: isFlipped ? 10 : 0 }}>
             <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
               <img src="/12-13.PNG" alt="" className="w-full h-full object-contain" />
             </div>
-            {/* テキスト */}
             <div className="relative z-10 w-full overflow-y-auto max-h-[400px]">
               <span className="block text-center text-[10px] font-black uppercase mb-8 border-b border-black pb-1">Answer & Explanation</span>
-              <p className="text-base font-bold leading-relaxed mt-4">{currentCard.answer}</p>
+              <p className="text-base font-bold leading-relaxed mt-4 whitespace-pre-wrap">{currentCard.answer}</p>
             </div>
           </div>
 
         </div>
       </div>
 
-      {/* 回答ボタン */}
       <div className={`mt-12 w-full max-w-md grid grid-cols-2 gap-6 transition-all duration-500 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-        <button onClick={(e) => { e.stopPropagation(); handleAnswer(false); }} className="py-4 border-2 border-red-600 bg-white rounded-md text-xs text-red-600 font-black shadow-sm">わからなかった</button>
-        <button onClick={(e) => { e.stopPropagation(); handleAnswer(true); }} className="py-4 border-2 border-green-600 bg-white rounded-md text-xs text-green-600 font-black shadow-sm">正解</button>
+        <button onClick={(e) => { e.stopPropagation(); handleAnswer(false); }} className="py-4 border-2 border-red-600 bg-white rounded-md text-xs text-red-600 font-black">わからなかった</button>
+        <button onClick={(e) => { e.stopPropagation(); handleAnswer(true); }} className="py-4 border-2 border-green-600 bg-white rounded-md text-xs text-green-600 font-black">正解</button>
       </div>
     </div>
   );
