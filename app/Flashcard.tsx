@@ -159,7 +159,7 @@ export default function WorldHeritageApp() {
           {/* 裏面（解答） */}
           <div className="absolute inset-0 w-full h-full bg-white rounded-lg border border-[#e6e4dc] flex flex-col items-center justify-center p-10 [backface-visibility:hidden] [transform:rotateY(180deg)] shadow-sm overflow-hidden">
              {/* カード内の背景画像 */}
-             <img src="/12-13.PNG" alt="" className="absolute inset-0 w-full h-full object-contain opacity-15 pointer-events-none" />
+             <img src="/12-13.PNG" alt="" className="absolute inset-0 w-full h-full object-contain opacity-10 pointer-events-none" />
 
             <div className="relative z-10 w-full overflow-y-auto max-h-[400px] pr-2 text-left custom-scrollbar">
               <span className="block text-center text-[10px] tracking-widest text-[#bcbab2] font-bold uppercase mb-8">Answer</span>
