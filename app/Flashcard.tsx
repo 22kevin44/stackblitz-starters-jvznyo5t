@@ -94,7 +94,7 @@ export default function WorldHeritageApp() {
           >
             <img src="/runfumika.png" className="h-12 w-auto animate-bounce" alt="running" />
           </div>
-          {/* 下の線(border)は削除しました */}
+         
         </div>
 
         <h1 className="text-3xl font-black mb-1 tracking-tighter border-b-4 border-black pb-1 uppercase">世界遺産王への道</h1>
