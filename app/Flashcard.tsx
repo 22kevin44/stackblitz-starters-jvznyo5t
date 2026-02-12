@@ -66,7 +66,7 @@ export default function WorldHeritageApp() {
                 disabled={count === 0}
                 onClick={() => handleStart(cat)} // 修正したハンドラを呼ぶ
                 className={`w-full py-5 border-2 border-black rounded-lg font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px] transition-all
-                  ${isImage ? 'bg-yellow-50' : count === 0 ? 'bg-gray-50 text-gray-300 border-gray-200' : 'bg-white'}`}
+                  ${isImage ? 'bg-gray-200' : count === 0 ? 'bg-gray-50 text-gray-300 border-gray-200' : 'bg-white'}`}
               >
                 <span className="block truncate px-1">{isImage ? `🖼️ ${cat}` : cat}</span>
                 {!isImage && <span className="text-[9px] font-normal opacity-50">({count}問)</span>}
