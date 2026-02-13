@@ -11,17 +11,12 @@ export default function WorldHeritageApp() {
   const [showResult, setShowResult] = useState(false);
   const [missedCards, setMissedCards] = useState<Card[]>([]);
   const [isReviewMode, setIsReviewMode] = useState(false);
-  
-  // キャラクターの移動状態
   const [charPos, setCharPos] = useState(110); 
   const [isFacingRight, setIsFacingRight] = useState(false);
 
-  // --- PDFビューワー用の状態 ---
-  const [viewingPdf, setViewingPdf] = useState<string | null>(null);
-
   // キャラクター移動アニメーション
   useEffect(() => {
-    if (currentCategory || viewingPdf) return;
+    if (currentCategory) return;
     const interval = setInterval(() => {
       setCharPos(prev => {
         if (isFacingRight) {
@@ -34,7 +29,7 @@ export default function WorldHeritageApp() {
       });
     }, 30);
     return () => clearInterval(interval);
-  }, [isFacingRight, currentCategory, viewingPdf]);
+  }, [isFacingRight, currentCategory]);
 
   const categories = Object.keys(CATEGORY_DATA || {});
   
@@ -50,14 +45,12 @@ export default function WorldHeritageApp() {
   const handleStart = (catName: string, isAllShuffle = false) => {
     let sourceCards = isAllShuffle ? allQuestions : (CATEGORY_DATA[catName] || []);
     if (sourceCards.length === 0) return;
-
     setIsFlipped(false);
     setShowResult(false);
     setCurrentIndex(0);
     setMissedCards([]);
     setIsReviewMode(false);
     setCurrentCategory(isAllShuffle ? "全問題シャッフル" : catName);
-
     const shuffled = [...sourceCards].sort(() => Math.random() - 0.5);
     setCards(shuffled.slice(0, 10));
   };
@@ -79,37 +72,12 @@ export default function WorldHeritageApp() {
     }
   };
 
-  // --- PDFビューワー表示中の画面 ---
-  if (viewingPdf) {
-    return (
-      <div className="fixed inset-0 z-[100] bg-black flex flex-col">
-        <div className="flex justify-between items-center p-4 bg-gray-900 text-white">
-          <span className="text-xs font-bold truncate">テキスト閲覧中</span>
-          <button 
-            onClick={() => setViewingPdf(null)}
-            className="px-4 py-2 bg-red-600 rounded-md font-black text-sm uppercase tracking-tighter shadow-lg active:scale-95 transition-transform"
-          >
-            × 閉じてクイズへ
-          </button>
-        </div>
-        {/* PDF本体を表示 */}
-        <iframe src={viewingPdf} className="flex-1 w-full border-none bg-white" title="PDF Viewer" />
-      </div>
-    );
-  }
-
   // 1. トップ画面
   if (!currentCategory) {
     return (
       <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-4 font-sans text-black text-center overflow-hidden">
         <div className="relative w-full h-16 mb-2 pointer-events-none">
-          <div 
-            className="absolute bottom-0 transition-transform duration-100"
-            style={{ 
-              left: `${charPos}%`, 
-              transform: isFacingRight ? 'scaleX(-1)' : 'scaleX(1)' 
-            }}
-          >
+          <div className="absolute bottom-0 transition-transform duration-100" style={{ left: `${charPos}%`, transform: isFacingRight ? 'scaleX(-1)' : 'scaleX(1)' }}>
             <img src="/runfumika.png" className="h-12 w-auto animate-bounce" alt="running" />
           </div>
         </div>
@@ -119,43 +87,27 @@ export default function WorldHeritageApp() {
         <div className="w-full max-w-xl">
           <div className="grid grid-cols-4 gap-2">
             
-            {/* 全問題シャッフル */}
-            <button
-              onClick={() => handleStart("全問題シャッフル", true)}
-              className="flex flex-col items-center justify-center aspect-square border-2 border-red-600 rounded-lg font-black text-[9px] bg-red-50 text-red-600 shadow-[2px_2px_0px_0px_rgba(220,38,38,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px] transition-all"
-            >
-              <span>全問題</span>
-              <span>シャッフル</span>
-              <span className="text-[8px] font-normal opacity-70 mt-1">({allQuestions.length})</span>
+            <button onClick={() => handleStart("全問題シャッフル", true)} className="flex flex-col items-center justify-center aspect-square border-2 border-red-600 rounded-lg font-black text-[9px] bg-red-50 text-red-600 shadow-[2px_2px_0px_0px_rgba(220,38,38,1)] active:shadow-none transition-all">
+              <span>全問題</span><span>シャッフル</span><span className="text-[8px] font-normal opacity-70 mt-1">({allQuestions.length})</span>
             </button>
 
-            {/* クイズカテゴリーボタン */}
             {categories.map((cat) => {
               if (cat === "日本の遺産登録基準") return null;
               const list = CATEGORY_DATA[cat] || [];
               const count = list.length;
               return (
-                <button
-                  key={cat}
-                  disabled={count === 0}
-                  onClick={() => handleStart(cat)}
-                  className={`flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[9px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px] transition-all
-                    ${count === 0 ? 'bg-gray-50 text-gray-300 border-gray-200' : 'bg-white hover:bg-gray-50'}`}
-                >
-                  <span className="truncate w-full px-0.5">{cat}</span>
-                  <span className="text-[8px] font-normal opacity-50 mt-1">({count})</span>
+                <button key={cat} disabled={count === 0} onClick={() => handleStart(cat)} className={`flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[9px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all ${count === 0 ? 'bg-gray-50 text-gray-300 border-gray-200' : 'bg-white hover:bg-gray-50'}`}>
+                  <span className="truncate w-full px-0.5">{cat}</span><span className="text-[8px] font-normal opacity-50 mt-1">({count})</span>
                 </button>
               );
             })}
 
-            {/* 学習メモ（Googleドキュメント：これは外部リンクで開く） */}
-            <a href="https://docs.google.com/document/d/14_XMcn05UAqzPfNN6R-OMmwP5SXNen289CQgthOB9wY/edit?usp=sharing" target="_blank" rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[10px] bg-gray-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
-            >
+            {/* 学習メモ：Googleドキュメントは「別タブ」が安全 */}
+            <a href="https://docs.google.com/document/d/14_XMcn05UAqzPfNN6R-OMmwP5SXNen289CQgthOB9wY/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[10px] bg-gray-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none">
               <span>学習メモ</span>
             </a>
 
-            {/* テキストボタン群 */}
+            {/* テキストボタン：あえて同じタブで開くことで、スマホの操作性を優先 */}
             {[
               { label: "基礎知識", url: "/kiso-text.pdf" },
               { label: "日本の遺産1", url: "/textjapan1.pdf" },
@@ -171,17 +123,16 @@ export default function WorldHeritageApp() {
             ].map((textBtn) => {
               const isLinked = textBtn.url !== "#";
               return (
-                <button 
+                <a 
                   key={textBtn.label} 
-                  onClick={() => isLinked && setViewingPdf(textBtn.url)}
+                  href={isLinked ? textBtn.url : undefined} 
                   className={`flex flex-col items-center justify-center aspect-square border-2 rounded-lg font-bold text-[9px] transition-all
                     ${isLinked 
                       ? 'border-blue-600 bg-blue-50 text-blue-600 shadow-[2px_2px_0px_0px_rgba(37,99,235,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]' 
-                      : 'border-blue-100 bg-blue-50/30 text-blue-200 cursor-not-allowed'}`}
+                      : 'border-blue-100 bg-blue-50/30 text-blue-200 pointer-events-none'}`}
                 >
-                  <span>{textBtn.label}</span>
-                  <span>テキスト</span>
-                </button>
+                  <span>{textBtn.label}</span><span>テキスト</span>
+                </a>
               );
             })}
           </div>
@@ -190,7 +141,7 @@ export default function WorldHeritageApp() {
     );
   }
 
-  // --- クイズ・結果画面のロジック（以前と同様） ---
+  // クイズ画面本体（中身は変わっていません）
   const currentCard = cards[currentIndex];
   if (showResult || !currentCard) {
     return (
@@ -200,8 +151,7 @@ export default function WorldHeritageApp() {
           <div className="mb-10 text-4xl font-black"><p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-widest">Missed</p>{missedCards.length}</div>
           <div className="space-y-3">
             {missedCards.length > 0 && (
-              <button onClick={() => { setCards([...missedCards].sort(() => Math.random() - 0.5)); setMissedCards([]); setCurrentIndex(0); setIsFlipped(false); setShowResult(false); setIsReviewMode(true); }}
-                className="w-full py-4 bg-red-600 text-white rounded-md font-bold text-sm tracking-widest shadow-[3px_3px_0px_0px_rgba(220,38,38,0.2)]">間違えた問題を解き直す</button>
+              <button onClick={() => { setCards([...missedCards].sort(() => Math.random() - 0.5)); setMissedCards([]); setCurrentIndex(0); setIsFlipped(false); setShowResult(false); setIsReviewMode(true); }} className="w-full py-4 bg-red-600 text-white rounded-md font-bold text-sm tracking-widest">間違えた問題を解き直す</button>
             )}
             <button onClick={() => { setCurrentCategory(null); setShowResult(false); }} className="w-full py-4 bg-black text-white rounded-md font-bold text-sm tracking-widest">メニューに戻る</button>
           </div>
