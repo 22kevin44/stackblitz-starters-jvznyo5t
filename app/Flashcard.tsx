@@ -11,7 +11,9 @@ export default function WorldHeritageApp() {
   const [showResult, setShowResult] = useState(false);
   const [missedCards, setMissedCards] = useState<Card[]>([]);
   const [isReviewMode, setIsReviewMode] = useState(false);
-  const [charPos, setCharPos] = useState(110);
+  
+  // キャラクターの移動状態
+  const [charPos, setCharPos] = useState(110); 
   const [isFacingRight, setIsFacingRight] = useState(false);
 
   // キャラクター移動アニメーション
@@ -33,7 +35,7 @@ export default function WorldHeritageApp() {
 
   const categories = Object.keys(CATEGORY_DATA || {});
   
-  // 全問題リストの作成
+  // 全問題リストの作成（集計用）
   let allQuestions: Card[] = [];
   categories.forEach(key => {
     const list = CATEGORY_DATA[key];
@@ -78,10 +80,15 @@ export default function WorldHeritageApp() {
   if (!currentCategory) {
     return (
       <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-4 font-sans text-black text-center overflow-hidden">
-        <div className="relative w-full h-12 mb-2 pointer-events-none">
-          <div className="absolute bottom-0 transition-transform duration-100"
-            style={{ left: `${charPos}%`, transform: isFacingRight ? 'scaleX(-1)' : 'scaleX(1)' }}>
-            <img src="/runfumika.png" className="h-10 w-auto animate-bounce" alt="running" />
+        <div className="relative w-full h-16 mb-2 pointer-events-none">
+          <div 
+            className="absolute bottom-0 transition-transform duration-100"
+            style={{ 
+              left: `${charPos}%`, 
+              transform: isFacingRight ? 'scaleX(-1)' : 'scaleX(1)' 
+            }}
+          >
+            <img src="/runfumika.png" className="h-12 w-auto animate-bounce" alt="running" />
           </div>
         </div>
 
@@ -111,7 +118,7 @@ export default function WorldHeritageApp() {
                   disabled={count === 0}
                   onClick={() => handleStart(cat)}
                   className={`flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[9px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px] transition-all
-                    ${count === 0 ? 'bg-gray-50 text-gray-300 border-gray-200' : 'bg-white'}`}
+                    ${count === 0 ? 'bg-gray-50 text-gray-300 border-gray-200' : 'bg-white hover:bg-gray-50'}`}
                 >
                   <span className="truncate w-full px-0.5">{cat}</span>
                   <span className="text-[8px] font-normal opacity-50 mt-1">({count})</span>
@@ -163,18 +170,32 @@ export default function WorldHeritageApp() {
     );
   }
 
-  // --- クイズ画面・結果画面（ロジック維持） ---
+  // クイズ画面本体
   const currentCard = cards[currentIndex];
   if (showResult || !currentCard) {
     return (
       <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-6 text-black text-center">
         <div className="w-full max-w-md bg-white p-10 rounded-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative">
           <h2 className="text-xl font-black mb-8 uppercase tracking-widest">{isReviewMode ? '試練突破' : '学習完了'}</h2>
-          <div className="mb-10 text-4xl font-black"><p className="text-xs font-bold text-gray-400 mb-1 uppercase">Missed</p>{missedCards.length}</div>
+          <div className="mb-10 text-4xl font-black">
+            <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-widest">Missed</p>
+            {missedCards.length}
+          </div>
           <div className="space-y-3">
             {missedCards.length > 0 && (
-              <button onClick={() => { setCards([...missedCards].sort(() => Math.random() - 0.5)); setMissedCards([]); setCurrentIndex(0); setIsFlipped(false); setShowResult(false); setIsReviewMode(true); }}
-                className="w-full py-4 bg-red-600 text-white rounded-md font-bold text-sm tracking-widest">間違えた問題を解き直す</button>
+              <button 
+                onClick={() => {
+                  setCards([...missedCards].sort(() => Math.random() - 0.5));
+                  setMissedCards([]);
+                  setCurrentIndex(0);
+                  setIsFlipped(false);
+                  setShowResult(false);
+                  setIsReviewMode(true);
+                }}
+                className="w-full py-4 bg-red-600 text-white rounded-md font-bold text-sm tracking-widest shadow-[3px_3px_0px_0px_rgba(220,38,38,0.2)]"
+              >
+                間違えた問題を解き直す
+              </button>
             )}
             <button onClick={() => { setCurrentCategory(null); setShowResult(false); }} className="w-full py-4 bg-black text-white rounded-md font-bold text-sm tracking-widest">メニューに戻る</button>
           </div>
@@ -188,7 +209,7 @@ export default function WorldHeritageApp() {
       <div className="mt-4 mb-8 w-full max-w-md flex justify-between items-center">
         <button onClick={() => setCurrentCategory(null)} className="text-[10px] font-black border-b-2 border-black pb-0.5 uppercase tracking-widest">← Stop</button>
         <div className="text-right">
-          <p className="text-[10px] font-bold text-gray-400 uppercase">{isReviewMode ? 'Review Mode' : currentCategory}</p>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{isReviewMode ? 'Review Mode' : currentCategory}</p>
           <p className="text-sm font-black italic">{currentIndex + 1} / {cards.length}</p>
         </div>
       </div>
