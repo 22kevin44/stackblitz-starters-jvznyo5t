@@ -16,9 +16,12 @@ export default function WorldHeritageApp() {
   const [charPos, setCharPos] = useState(110); 
   const [isFacingRight, setIsFacingRight] = useState(false);
 
+  // --- PDFビューワー用の状態 ---
+  const [viewingPdf, setViewingPdf] = useState<string | null>(null);
+
   // キャラクター移動アニメーション
   useEffect(() => {
-    if (currentCategory) return;
+    if (currentCategory || viewingPdf) return;
     const interval = setInterval(() => {
       setCharPos(prev => {
         if (isFacingRight) {
@@ -31,11 +34,11 @@ export default function WorldHeritageApp() {
       });
     }, 30);
     return () => clearInterval(interval);
-  }, [isFacingRight, currentCategory]);
+  }, [isFacingRight, currentCategory, viewingPdf]);
 
   const categories = Object.keys(CATEGORY_DATA || {});
   
-  // 全問題リストの作成（集計用）
+  // 全問題リストの作成
   let allQuestions: Card[] = [];
   categories.forEach(key => {
     const list = CATEGORY_DATA[key];
@@ -75,6 +78,25 @@ export default function WorldHeritageApp() {
       setShowResult(true);
     }
   };
+
+  // --- PDFビューワー表示中の画面 ---
+  if (viewingPdf) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-black flex flex-col">
+        <div className="flex justify-between items-center p-4 bg-gray-900 text-white">
+          <span className="text-xs font-bold truncate">テキスト閲覧中</span>
+          <button 
+            onClick={() => setViewingPdf(null)}
+            className="px-4 py-2 bg-red-600 rounded-md font-black text-sm uppercase tracking-tighter shadow-lg active:scale-95 transition-transform"
+          >
+            × 閉じてクイズへ
+          </button>
+        </div>
+        {/* PDF本体を表示 */}
+        <iframe src={viewingPdf} className="flex-1 w-full border-none bg-white" title="PDF Viewer" />
+      </div>
+    );
+  }
 
   // 1. トップ画面
   if (!currentCategory) {
@@ -126,14 +148,14 @@ export default function WorldHeritageApp() {
               );
             })}
 
-            {/* 学習メモ（Googleドキュメント） */}
+            {/* 学習メモ（Googleドキュメント：これは外部リンクで開く） */}
             <a href="https://docs.google.com/document/d/14_XMcn05UAqzPfNN6R-OMmwP5SXNen289CQgthOB9wY/edit?usp=sharing" target="_blank" rel="noopener noreferrer"
               className="flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[10px] bg-gray-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
             >
               <span>学習メモ</span>
             </a>
 
-            {/* テキストボタン群（未設定時は薄いブルーに） */}
+            {/* テキストボタン群 */}
             {[
               { label: "基礎知識", url: "/kiso-text.pdf" },
               { label: "日本の遺産1", url: "/textjapan1.pdf" },
@@ -149,11 +171,9 @@ export default function WorldHeritageApp() {
             ].map((textBtn) => {
               const isLinked = textBtn.url !== "#";
               return (
-                <a 
+                <button 
                   key={textBtn.label} 
-                  href={isLinked ? textBtn.url : undefined} 
-                  target={isLinked ? "_blank" : undefined} 
-                  rel="noopener noreferrer"
+                  onClick={() => isLinked && setViewingPdf(textBtn.url)}
                   className={`flex flex-col items-center justify-center aspect-square border-2 rounded-lg font-bold text-[9px] transition-all
                     ${isLinked 
                       ? 'border-blue-600 bg-blue-50 text-blue-600 shadow-[2px_2px_0px_0px_rgba(37,99,235,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]' 
@@ -161,7 +181,7 @@ export default function WorldHeritageApp() {
                 >
                   <span>{textBtn.label}</span>
                   <span>テキスト</span>
-                </a>
+                </button>
               );
             })}
           </div>
@@ -170,32 +190,18 @@ export default function WorldHeritageApp() {
     );
   }
 
-  // クイズ画面本体
+  // --- クイズ・結果画面のロジック（以前と同様） ---
   const currentCard = cards[currentIndex];
   if (showResult || !currentCard) {
     return (
       <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-6 text-black text-center">
         <div className="w-full max-w-md bg-white p-10 rounded-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative">
           <h2 className="text-xl font-black mb-8 uppercase tracking-widest">{isReviewMode ? '試練突破' : '学習完了'}</h2>
-          <div className="mb-10 text-4xl font-black">
-            <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-widest">Missed</p>
-            {missedCards.length}
-          </div>
+          <div className="mb-10 text-4xl font-black"><p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-widest">Missed</p>{missedCards.length}</div>
           <div className="space-y-3">
             {missedCards.length > 0 && (
-              <button 
-                onClick={() => {
-                  setCards([...missedCards].sort(() => Math.random() - 0.5));
-                  setMissedCards([]);
-                  setCurrentIndex(0);
-                  setIsFlipped(false);
-                  setShowResult(false);
-                  setIsReviewMode(true);
-                }}
-                className="w-full py-4 bg-red-600 text-white rounded-md font-bold text-sm tracking-widest shadow-[3px_3px_0px_0px_rgba(220,38,38,0.2)]"
-              >
-                間違えた問題を解き直す
-              </button>
+              <button onClick={() => { setCards([...missedCards].sort(() => Math.random() - 0.5)); setMissedCards([]); setCurrentIndex(0); setIsFlipped(false); setShowResult(false); setIsReviewMode(true); }}
+                className="w-full py-4 bg-red-600 text-white rounded-md font-bold text-sm tracking-widest shadow-[3px_3px_0px_0px_rgba(220,38,38,0.2)]">間違えた問題を解き直す</button>
             )}
             <button onClick={() => { setCurrentCategory(null); setShowResult(false); }} className="w-full py-4 bg-black text-white rounded-md font-bold text-sm tracking-widest">メニューに戻る</button>
           </div>
