@@ -113,7 +113,7 @@ export default function WorldHeritageApp() {
         <div className="w-full max-w-xl">
           <div className="grid grid-cols-4 gap-2">
             <button onClick={() => handleStart("全問題シャッフル", true)} className="flex flex-col items-center justify-center aspect-square border-2 border-red-600 rounded-lg font-black text-[9px] bg-red-50 text-red-600 shadow-[2px_2px_0px_0px_rgba(220,38,38,1)] active:shadow-none transition-all">
-              <span>全問題</span><span>シャッフル</span><span className="text-[8px] font-normal opacity-70 mt-1">({allQuestions.length})</span>
+              <span>全問題</span><span>シャッフル</span><span className="text-[8px] font-normal opacity-70 mt-1">({allQuestions.length}問)</span>
             </button>
             {categories.map((cat) => {
               if (cat === "日本の遺産登録基準") return null;
@@ -121,7 +121,7 @@ export default function WorldHeritageApp() {
               const count = list.length;
               return (
                 <button key={cat} disabled={count === 0} onClick={() => handleStart(cat)} className={`flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[9px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all ${count === 0 ? 'bg-gray-50 text-gray-300 border-gray-200' : 'bg-white hover:bg-gray-50'}`}>
-                  <span className="truncate w-full px-0.5">{cat}</span><span className="text-[8px] font-normal opacity-50 mt-1">({count})</span>
+                  <span className="truncate w-full px-0.5">{cat}</span><span className="text-[8px] font-normal opacity-50 mt-1">({count}問)</span>
                 </button>
               );
             })}
