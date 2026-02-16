@@ -56,7 +56,19 @@ export default function WorldHeritageApp() {
     setCards(shuffled.slice(0, 10));
   };
 
+  // --- 修正箇所：handleAnswer ---
   const handleAnswer = (isCorrect: boolean) => {
+    const currentCard = cards[currentIndex];
+    
+    // NGボタンが押された場合、間違えたリストに追加する
+    if (!isCorrect && currentCard) {
+      setMissedCards(prev => {
+        // すでに追加されている場合は重複させない
+        if (prev.find(c => c.id === currentCard.id)) return prev;
+        return [...prev, currentCard];
+      });
+    }
+
     const nextIndex = currentIndex + 1;
     if (nextIndex < cards.length) {
       setIsFlipped(false);
@@ -66,7 +78,7 @@ export default function WorldHeritageApp() {
     }
   };
 
-  // 1. PDFビューワー画面（クイズ画面の上に重なる）
+  // 1. PDFビューワー画面
   if (viewingPdf) {
     return (
       <div className="fixed inset-0 z-[200] bg-black/90 flex flex-col animate-in fade-in duration-200">
@@ -161,17 +173,33 @@ export default function WorldHeritageApp() {
     );
   }
 
-  // 3. クイズ画面本体
+  // 3. クイズ結果画面
   const currentCard = cards[currentIndex];
   if (showResult || !currentCard) {
     return (
       <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-6 text-black text-center">
         <div className="w-full max-w-md bg-white p-10 rounded-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative">
           <h2 className="text-xl font-black mb-8 uppercase tracking-widest">{isReviewMode ? '試練突破' : '学習完了'}</h2>
-          <div className="mb-10 text-4xl font-black"><p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-widest">Missed</p>{missedCards.length}</div>
+          <div className="mb-10 text-4xl font-black">
+            <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-widest">Missed</p>
+            {missedCards.length}
+          </div>
           <div className="space-y-3">
             {missedCards.length > 0 && (
-              <button onClick={() => { setCards([...missedCards].sort(() => Math.random() - 0.5)); setMissedCards([]); setCurrentIndex(0); setIsFlipped(false); setShowResult(false); setIsReviewMode(true); }} className="w-full py-4 bg-red-600 text-white rounded-md font-bold text-sm tracking-widest shadow-[3px_3px_0px_0px_rgba(220,38,38,0.2)]">間違えた問題を解き直す</button>
+              <button 
+                onClick={() => { 
+                  // 間違えた問題をシャッフルしてセットし、インデックスをリセット
+                  setCards([...missedCards].sort(() => Math.random() - 0.5)); 
+                  setMissedCards([]); 
+                  setCurrentIndex(0); 
+                  setIsFlipped(false); 
+                  setShowResult(false); 
+                  setIsReviewMode(true); 
+                }} 
+                className="w-full py-4 bg-red-600 text-white rounded-md font-bold text-sm tracking-widest shadow-[3px_3px_0px_0px_rgba(220,38,38,0.2)]"
+              >
+                間違えた問題を解き直す
+              </button>
             )}
             <button onClick={() => { setCurrentCategory(null); setShowResult(false); }} className="w-full py-4 bg-black text-white rounded-md font-bold text-sm tracking-widest">メニューに戻る</button>
           </div>
@@ -180,6 +208,7 @@ export default function WorldHeritageApp() {
     );
   }
 
+  // 4. クイズ画面
   return (
     <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center p-6 font-sans text-black">
       <div className="mt-4 mb-8 w-full max-w-md flex justify-between items-center">
@@ -194,14 +223,14 @@ export default function WorldHeritageApp() {
           <div className={`absolute inset-0 w-full h-full bg-white rounded-lg border-2 border-black flex flex-col items-center justify-center p-10 shadow-md ${isFlipped ? 'opacity-0' : 'opacity-100'}`} style={{ backfaceVisibility: 'hidden', zIndex: isFlipped ? 0 : 10 }}>
             <img src="/runfumika.png" className="absolute inset-0 w-full h-full object-contain opacity-5 pointer-events-none" />
             <div className="relative z-10 w-full overflow-y-auto text-center px-1">
-              <span className="block text-[10px] font-black text-gray-300 mb-6 tracking-[0.3em] uppercase">Question</span>
+              <span className="block text-[10px] font-black text-gray-300 mb-6 tracking-[0.3em] uppercase text-center w-full">Question</span>
               <p className="text-lg font-bold leading-relaxed whitespace-pre-wrap">{currentCard.question}</p>
             </div>
           </div>
           <div className={`absolute inset-0 w-full h-full bg-white rounded-lg border-2 border-black flex flex-col items-center justify-center p-10 shadow-md ${isFlipped ? 'opacity-100' : 'opacity-0'}`} style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', zIndex: isFlipped ? 10 : 0 }}>
             <img src="/runfumika.png" className="absolute inset-0 w-full h-full object-contain opacity-5 pointer-events-none" />
             <div className="relative z-10 w-full overflow-y-auto max-h-[380px] text-left text-black">
-              <span className="block text-center text-[10px] font-black text-gray-300 mb-6 tracking-[0.3em] uppercase">Answer</span>
+              <span className="block text-center text-[10px] font-black text-gray-300 mb-6 tracking-[0.3em] uppercase text-center w-full">Answer</span>
               <p className="text-base font-bold leading-relaxed whitespace-pre-wrap">{currentCard.answer}</p>
             </div>
           </div>
