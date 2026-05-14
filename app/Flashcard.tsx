@@ -138,9 +138,8 @@ export default function WorldHeritageApp() {
     );
   }
 
-// 3. トップ画面（ここから入れ替え）
+// 3. トップ画面
 if (!currentCategory) {
-  // カウントダウン計算ロジック
   const getDaysUntilExam = () => {
     const targetDate = new Date(2026, 6, 12); 
     const now = new Date();
@@ -154,36 +153,42 @@ if (!currentCategory) {
 
   return (
     <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-4 font-sans text-[#444] text-center overflow-hidden">
-     {/* キャラクター（サイズを大きく修正） */}
-        {/* 親要素の高さも h-12 -> h-20 に変更して、大きい画像が収まるようにします */}
-        <div className="relative w-full h-20 mb-3 pointer-events-none">
-          <div className="absolute bottom-0 transition-transform duration-100" style={{ left: `${charPos}%`, transform: isFacingRight ? 'scaleX(-1)' : 'scaleX(1)' }}>
-            {/* imgのクラスを h-8 -> h-16 に変更。opacity（透明度）も少し濃く（0.4 -> 0.6）して目立たせます */}
-            <img src="/runfumika.png" className="h-16 w-auto opacity-100" alt="running" />
-          </div>
-        </div>
       
-      {/* タイトル & カウントダウン */}
-      <div className="mb-10">
-        <h1 className="text-xl font-bold tracking-[0.2em] text-[#333] mb-4">世界遺産王への道</h1>
-        
-        <div className="flex flex-col items-center">
-          <div className="w-8 h-[1px] bg-[#ddd] mb-3"></div>
-          <p className="text-[10px] font-medium tracking-[0.2em] text-[#999] mb-1 uppercase">July 12 Test</p>
-          <p className="text-sm font-medium text-[#666]">
-            {daysLeft > 0 ? (
-              <>試験まであと <span className="text-lg font-bold text-[#b22d35]">{daysLeft}</span> 日</>
-            ) : daysLeft === 0 ? (
-              <span className="text-[#b22d35] font-bold">本日、試験当日です</span>
-            ) : (
-              <span className="text-[#999]">試験期間が終了しました</span>
-            )}
-          </p>
-          <div className="w-8 h-[1px] bg-[#ddd] mt-3"></div>
+      {/* キャラクター（サイズを大きくし、ロゴとの重なりを防ぐ余白を設定） */}
+      <div className="relative w-full h-24 mb-2 pointer-events-none">
+        <div className="absolute bottom-0 transition-transform duration-100" style={{ left: `${charPos}%`, transform: isFacingRight ? 'scaleX(-1)' : 'scaleX(1)' }}>
+          <img src="/runfumika.png" className="h-20 w-auto opacity-100" alt="running" />
         </div>
       </div>
+      
+      {/* タイトルロゴ画像（ファイル名を title.png に修正し、サイズを最適化） */}
+      <div className="mb-4 flex justify-center w-full max-w-sm">
+        <img 
+          src="/tittle.png" 
+          alt="世界遺産王への道" 
+          className="w-full h-auto max-h-48 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300"
+        />
+      </div>
+      
+      {/* カウントダウン部分 */}
+      <div className="mb-10 flex flex-col items-center">
+        <div className="w-12 h-[1px] bg-[#ddd] mb-3"></div>
+        <p className="text-[10px] font-bold tracking-[0.2em] text-[#999] mb-1 uppercase">
+          July 12 Test Countdown
+        </p>
+        <p className="text-sm font-medium text-[#666]">
+          {daysLeft > 0 ? (
+            <>試験まであと <span className="text-2xl font-black text-[#b22d35] mx-1 italic">{daysLeft}</span> 日</>
+          ) : daysLeft === 0 ? (
+            <span className="text-[#b22d35] font-bold animate-pulse text-lg">本日、決戦の日です</span>
+          ) : (
+            <span className="text-[#999]">試験期間が終了しました</span>
+          )}
+        </p>
+        <div className="w-12 h-[1px] bg-[#ddd] mt-3"></div>
+      </div>
 
-      {/* ボタンメニュー（ここが細身になった部分です） */}
+      {/* ボタンメニュー（グリッドのバランスを調整） */}
       <div className="w-full max-w-xl">
         <div className="grid grid-cols-4 gap-3">
           {/* 全問題シャッフル */}
@@ -218,29 +223,29 @@ if (!currentCategory) {
             );
           })}
 
-          {/* 学習メモ（Google Doc） */}
+          {/* 学習メモ */}
           <a 
             href="https://docs.google.com/document/d/14_XMcn05UAqzPfNN6R-OMmwP5SXNen289CQgthOB9wY/edit?usp=sharing" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="flex flex-col items-center justify-center py-3 px-1 border border-[#ddd] bg-[#fdfdfd] rounded-md font-medium text-[10px] text-[#666] shadow-sm active:scale-95"
+            className="flex flex-col items-center justify-center py-3 px-1 border border-[#ddd] bg-[#fdfdfd] rounded-md font-medium text-[10px] text-[#666] shadow-sm active:scale-95 transition-all"
           >
-            <span>学習メモ</span>
+            <span className="leading-tight">学習メモ</span>
           </a>
 
           {/* PDFテキスト類 */}
           {[
             { label: "基礎知識", url: "/kiso-text.pdf" },
-            { label: "日本の1", url: "/textjapan1.pdf" },
-            { label: "日本の2", url: "/textjapan2.pdf" },
-            { label: "世界の1", url: "/textworld1.pdf" },
-            { label: "世界の2", url: "/textworld2.pdf" },
-            { label: "世界の3", url: "/textworld3.pdf" },
-            { label: "世界の4", url: "/textworld4.pdf" },
-            { label: "世界の5", url: "/textworld5.pdf" },
-            { label: "世界の6", url: "/textworld6.pdf" },
-            { label: "世界の7", url: "/textworld7.pdf" },
-            { label: "世界の8", url: "/textworld8.pdf" }
+            { label: "日本 1", url: "/textjapan1.pdf" },
+            { label: "日本 2", url: "/textjapan2.pdf" },
+            { label: "世界 1", url: "/textworld1.pdf" },
+            { label: "世界 2", url: "/textworld2.pdf" },
+            { label: "世界 3", url: "/textworld3.pdf" },
+            { label: "世界 4", url: "/textworld4.pdf" },
+            { label: "世界 5", url: "/textworld5.pdf" },
+            { label: "世界 6", url: "/textworld6.pdf" },
+            { label: "世界 7", url: "/textworld7.pdf" },
+            { label: "世界 8", url: "/textworld8.pdf" }
           ].map((textBtn) => {
             const isLinked = textBtn.url !== "#";
             return (
