@@ -138,61 +138,131 @@ export default function WorldHeritageApp() {
     );
   }
 
-  // 3. トップ画面
-  if (!currentCategory) {
-    return (
-      <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-4 font-sans text-black text-center overflow-hidden">
-        <div className="relative w-full h-16 mb-2 pointer-events-none">
+// 3. トップ画面（ここから入れ替え）
+if (!currentCategory) {
+  // カウントダウン計算ロジック
+  const getDaysUntilExam = () => {
+    const targetDate = new Date(2026, 6, 12); 
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const end = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+    const diffTime = end.getTime() - start.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
+  const daysLeft = getDaysUntilExam();
+
+  return (
+    <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-4 font-sans text-[#444] text-center overflow-hidden">
+     {/* キャラクター（サイズを大きく修正） */}
+        {/* 親要素の高さも h-12 -> h-20 に変更して、大きい画像が収まるようにします */}
+        <div className="relative w-full h-20 mb-3 pointer-events-none">
           <div className="absolute bottom-0 transition-transform duration-100" style={{ left: `${charPos}%`, transform: isFacingRight ? 'scaleX(-1)' : 'scaleX(1)' }}>
-            <img src="/runfumika.png" className="h-12 w-auto animate-bounce" alt="running" />
+            {/* imgのクラスを h-8 -> h-16 に変更。opacity（透明度）も少し濃く（0.4 -> 0.6）して目立たせます */}
+            <img src="/runfumika.png" className="h-16 w-auto opacity-100" alt="running" />
           </div>
         </div>
-        <h1 className="text-3xl font-black mb-8 tracking-tighter border-b-4 border-black pb-1 uppercase">世界遺産王への道</h1>
+      
+      {/* タイトル & カウントダウン */}
+      <div className="mb-10">
+        <h1 className="text-xl font-bold tracking-[0.2em] text-[#333] mb-4">世界遺産王への道</h1>
         
-        <div className="w-full max-w-xl">
-          <div className="grid grid-cols-4 gap-2">
-            <button onClick={() => setSelectedCategory("全問題シャッフル")} className="flex flex-col items-center justify-center aspect-square border-2 border-red-600 rounded-lg font-black text-[9px] bg-red-50 text-red-600 shadow-[2px_2px_0px_0px_rgba(220,38,38,1)] active:shadow-none transition-all">
-              <span>全問題</span><span>シャッフル</span><span className="text-[8px] font-normal opacity-70 mt-1">({allQuestions.length}問)</span>
-            </button>
-
-            {categories.map((cat) => {
-              if (cat === "日本の遺産登録基準") return null;
-              const list = CATEGORY_DATA[cat] || [];
-              const count = list.length;
-              return (
-                <button key={cat} disabled={count === 0} onClick={() => setSelectedCategory(cat)} className={`flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[9px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all ${count === 0 ? 'bg-gray-50 text-gray-300 border-gray-200' : 'bg-white hover:bg-gray-50'}`}>
-                  <span className="truncate w-full px-0.5">{cat}</span><span className="text-[8px] font-normal opacity-50 mt-1">({count}問)</span>
-                </button>
-              );
-            })}
-
-            <a href="https://docs.google.com/document/d/14_XMcn05UAqzPfNN6R-OMmwP5SXNen289CQgthOB9wY/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center aspect-square border-2 border-black rounded-lg font-bold text-[10px] bg-gray-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none"><span>学習メモ</span></a>
-
-            {[
-              { label: "基礎知識", url: "/kiso-text.pdf" },
-              { label: "日本の遺産1", url: "/textjapan1.pdf" },
-              { label: "日本の遺産2", url: "/textjapan2.pdf" },
-              { label: "世界の遺産1", url: "/textworld1.pdf" },
-              { label: "世界の遺産2", url: "/textworld2.pdf" },
-              { label: "世界の遺産3", url: "/textworld3.pdf" },
-              { label: "世界の遺産4", url: "/textworld4.pdf" },
-              { label: "世界の遺産5", url: "/textworld5.pdf" },
-              { label: "世界の遺産6", url: "/textworld6.pdf" },
-              { label: "世界の遺産7", url: "/textworld7.pdf" },
-              { label: "世界の遺産8", url: "/textworld8.pdf" }
-            ].map((textBtn) => {
-              const isLinked = textBtn.url !== "#";
-              return (
-                <button key={textBtn.label} onClick={() => isLinked && setViewingPdf(textBtn.url)} className={`flex flex-col items-center justify-center aspect-square border-2 rounded-lg font-bold text-[9px] transition-all ${isLinked ? 'border-blue-600 bg-blue-50 text-blue-600 shadow-[2px_2px_0px_0px_rgba(37,99,235,1)] active:shadow-none' : 'border-blue-100 bg-blue-50/30 text-blue-200 cursor-not-allowed'}`}>
-                  <span>{textBtn.label}</span><span>テキスト</span>
-                </button>
-              );
-            })}
-          </div>
+        <div className="flex flex-col items-center">
+          <div className="w-8 h-[1px] bg-[#ddd] mb-3"></div>
+          <p className="text-[10px] font-medium tracking-[0.2em] text-[#999] mb-1 uppercase">July 12 Test</p>
+          <p className="text-sm font-medium text-[#666]">
+            {daysLeft > 0 ? (
+              <>試験まであと <span className="text-lg font-bold text-[#b22d35]">{daysLeft}</span> 日</>
+            ) : daysLeft === 0 ? (
+              <span className="text-[#b22d35] font-bold">本日、試験当日です</span>
+            ) : (
+              <span className="text-[#999]">試験期間が終了しました</span>
+            )}
+          </p>
+          <div className="w-8 h-[1px] bg-[#ddd] mt-3"></div>
         </div>
       </div>
-    );
-  }
+
+      {/* ボタンメニュー（ここが細身になった部分です） */}
+      <div className="w-full max-w-xl">
+        <div className="grid grid-cols-4 gap-3">
+          {/* 全問題シャッフル */}
+          <button 
+            onClick={() => setSelectedCategory("全問題シャッフル")} 
+            className="flex flex-col items-center justify-center py-3 px-1 border border-[#b22d35] rounded-md font-bold text-[10px] bg-white text-[#b22d35] shadow-sm active:scale-95 transition-all"
+          >
+            <span className="leading-tight">全問題</span>
+            <span className="leading-tight">シャッフル</span>
+            <span className="text-[8px] font-normal opacity-70 mt-1">({allQuestions.length})</span>
+          </button>
+
+          {/* カテゴリ別ボタン */}
+          {categories.map((cat) => {
+            if (cat === "日本の遺産登録基準") return null;
+            const list = CATEGORY_DATA[cat] || [];
+            const count = list.length;
+            return (
+              <button 
+                key={cat} 
+                disabled={count === 0} 
+                onClick={() => setSelectedCategory(cat)} 
+                className={`flex flex-col items-center justify-center py-3 px-1 border rounded-md font-medium text-[10px] shadow-sm active:scale-95 transition-all ${
+                  count === 0 
+                    ? 'bg-[#f9f9f9] text-[#ccc] border-[#eee]' 
+                    : 'bg-white text-[#444] border-[#ddd] hover:border-[#bbb]'
+                }`}
+              >
+                <span className="truncate w-full px-0.5">{cat}</span>
+                <span className="text-[8px] font-normal opacity-50 mt-1">({count})</span>
+              </button>
+            );
+          })}
+
+          {/* 学習メモ（Google Doc） */}
+          <a 
+            href="https://docs.google.com/document/d/14_XMcn05UAqzPfNN6R-OMmwP5SXNen289CQgthOB9wY/edit?usp=sharing" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="flex flex-col items-center justify-center py-3 px-1 border border-[#ddd] bg-[#fdfdfd] rounded-md font-medium text-[10px] text-[#666] shadow-sm active:scale-95"
+          >
+            <span>学習メモ</span>
+          </a>
+
+          {/* PDFテキスト類 */}
+          {[
+            { label: "基礎知識", url: "/kiso-text.pdf" },
+            { label: "日本の1", url: "/textjapan1.pdf" },
+            { label: "日本の2", url: "/textjapan2.pdf" },
+            { label: "世界の1", url: "/textworld1.pdf" },
+            { label: "世界の2", url: "/textworld2.pdf" },
+            { label: "世界の3", url: "/textworld3.pdf" },
+            { label: "世界の4", url: "/textworld4.pdf" },
+            { label: "世界の5", url: "/textworld5.pdf" },
+            { label: "世界の6", url: "/textworld6.pdf" },
+            { label: "世界の7", url: "/textworld7.pdf" },
+            { label: "世界の8", url: "/textworld8.pdf" }
+          ].map((textBtn) => {
+            const isLinked = textBtn.url !== "#";
+            return (
+              <button 
+                key={textBtn.label} 
+                onClick={() => isLinked && setViewingPdf(textBtn.url)} 
+                className={`flex flex-col items-center justify-center py-3 px-1 border rounded-md font-medium text-[10px] transition-all ${
+                  isLinked 
+                    ? 'border-[#d1dce5] bg-[#f0f4f8] text-[#5a7b9a] shadow-sm active:scale-95' 
+                    : 'border-[#eee] bg-white text-[#ddd] cursor-not-allowed'
+                }`}
+              >
+                <span className="leading-tight">{textBtn.label}</span>
+                <span className="text-[8px] opacity-70">テキスト</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
   // 4. クイズ画面・結果画面（ロジック維持）
   const currentCard = cards[currentIndex];
