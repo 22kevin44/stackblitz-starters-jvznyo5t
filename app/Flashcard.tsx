@@ -174,12 +174,12 @@ export default function WorldHeritageApp() {
               { label: "日本の遺産2", url: "/textjapan2.pdf" },
               { label: "世界の遺産1", url: "/textworld1.pdf" },
               { label: "世界の遺産2", url: "/textworld2.pdf" },
-              { label: "世界の遺産3", url: "#" },
-              { label: "世界の遺産4", url: "#" },
-              { label: "世界の遺産5", url: "#" },
-              { label: "世界の遺産6", url: "#" },
-              { label: "世界の遺産7", url: "#" },
-              { label: "世界の遺産8", url: "#" }
+              { label: "世界の遺産3", url: "/textworld3.pdf" },
+              { label: "世界の遺産4", url: "/textworld4.pdf" },
+              { label: "世界の遺産5", url: "/textworld5.pdf" },
+              { label: "世界の遺産6", url: "/textworld6.pdf" },
+              { label: "世界の遺産7", url: "/textworld7.pdf" },
+              { label: "世界の遺産8", url: "/textworld8.pdf" }
             ].map((textBtn) => {
               const isLinked = textBtn.url !== "#";
               return (
