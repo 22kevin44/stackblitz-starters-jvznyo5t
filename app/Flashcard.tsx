@@ -215,13 +215,40 @@ export default function WorldHeritageApp() {
 
   return (
     <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center p-6 font-sans text-black">
-      <div className="mt-4 mb-8 w-full max-w-md flex justify-between items-center">
+      <div className="mt-4 mb-4 w-full max-w-md flex justify-between items-center">
         <button onClick={() => setCurrentCategory(null)} className="text-[10px] font-black border-b-2 border-black pb-0.5 uppercase tracking-widest">← Stop</button>
         <div className="text-right">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{isReviewMode ? 'Review Mode' : currentCategory}</p>
           <p className="text-sm font-black italic">{currentIndex + 1} / {cards.length}</p>
         </div>
       </div>
+      {!isReviewMode && (
+        <div className="mb-6 w-full max-w-md grid grid-cols-4 gap-2">
+          {[
+            { label: '«10', delta: -10 },
+            { label: '‹1',  delta: -1  },
+            { label: '1›',  delta: +1  },
+            { label: '10»', delta: +10 },
+          ].map(({ label, delta }) => {
+            const next = currentIndex + delta;
+            const disabled = next < 0 || next >= cards.length;
+            return (
+              <button
+                key={label}
+                disabled={disabled}
+                onClick={() => { setIsFlipped(false); setTimeout(() => setCurrentIndex(next), 150); }}
+                className={`py-2 text-xs font-black tracking-widest border-2 rounded transition-all
+                  ${disabled
+                    ? 'border-gray-200 text-gray-300 bg-white cursor-not-allowed'
+                    : 'border-black bg-white text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-px active:translate-y-px'
+                  }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      )}
       <div className="relative w-full max-w-md h-[500px]" style={{ perspective: '1200px' }} onClick={() => setIsFlipped(!isFlipped)}>
         <div className="relative w-full h-full transition-transform duration-500" style={{ transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
           <div className={`absolute inset-0 w-full h-full bg-white rounded-lg border-2 border-black flex flex-col items-center justify-center p-10 shadow-md ${isFlipped ? 'opacity-0' : 'opacity-100'}`} style={{ backfaceVisibility: 'hidden', zIndex: isFlipped ? 0 : 10 }}>
