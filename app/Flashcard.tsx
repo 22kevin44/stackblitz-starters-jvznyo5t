@@ -154,14 +154,14 @@ if (!currentCategory) {
   return (
     <div className="min-h-screen bg-[#f6f5f1] flex flex-col items-center justify-center p-4 font-sans text-[#444] text-center overflow-hidden">
       
-      {/* キャラクター（サイズを大きくし、ロゴとの重なりを防ぐ余白を設定） */}
+      {/* キャラクター（サイズ大 / 視認性100%） */}
       <div className="relative w-full h-24 mb-2 pointer-events-none">
         <div className="absolute bottom-0 transition-transform duration-100" style={{ left: `${charPos}%`, transform: isFacingRight ? 'scaleX(-1)' : 'scaleX(1)' }}>
           <img src="/runfumika.png" className="h-20 w-auto opacity-100" alt="running" />
         </div>
       </div>
       
-      {/* タイトルロゴ画像（ファイル名を title.png に修正し、サイズを最適化） */}
+      {/* タイトルロゴ画像 */}
       <div className="mb-4 flex justify-center w-full max-w-sm">
         <img 
           src="/tittle.png" 
@@ -170,13 +170,13 @@ if (!currentCategory) {
         />
       </div>
       
-      {/* カウントダウン部分 */}
+      {/* カウントダウン */}
       <div className="mb-10 flex flex-col items-center">
         <div className="w-12 h-[1px] bg-[#ddd] mb-3"></div>
         <p className="text-[10px] font-bold tracking-[0.2em] text-[#999] mb-1 uppercase">
           July 12 Test Countdown
         </p>
-        <p className="text-sm font-medium text-[#666]">
+        <div className="text-sm font-medium text-[#666]">
           {daysLeft > 0 ? (
             <>試験まであと <span className="text-2xl font-black text-[#b22d35] mx-1 italic">{daysLeft}</span> 日</>
           ) : daysLeft === 0 ? (
@@ -184,24 +184,23 @@ if (!currentCategory) {
           ) : (
             <span className="text-[#999]">試験期間が終了しました</span>
           )}
-        </p>
+        </div>
         <div className="w-12 h-[1px] bg-[#ddd] mt-3"></div>
       </div>
 
-      {/* ボタンメニュー（グリッドのバランスを調整） */}
+      {/* ボタンメニュー（高さを min-h-[70px] で完全統一） */}
       <div className="w-full max-w-xl">
         <div className="grid grid-cols-4 gap-3">
-          {/* 全問題シャッフル */}
+          
           <button 
             onClick={() => setSelectedCategory("全問題シャッフル")} 
-            className="flex flex-col items-center justify-center py-3 px-1 border border-[#b22d35] rounded-md font-bold text-[10px] bg-white text-[#b22d35] shadow-sm active:scale-95 transition-all"
+            className="flex flex-col items-center justify-center min-h-[70px] px-1 border border-[#b22d35] rounded-md font-bold text-[10px] bg-white text-[#b22d35] shadow-sm active:scale-95 transition-all"
           >
             <span className="leading-tight">全問題</span>
             <span className="leading-tight">シャッフル</span>
             <span className="text-[8px] font-normal opacity-70 mt-1">({allQuestions.length})</span>
           </button>
 
-          {/* カテゴリ別ボタン */}
           {categories.map((cat) => {
             if (cat === "日本の遺産登録基準") return null;
             const list = CATEGORY_DATA[cat] || [];
@@ -211,7 +210,7 @@ if (!currentCategory) {
                 key={cat} 
                 disabled={count === 0} 
                 onClick={() => setSelectedCategory(cat)} 
-                className={`flex flex-col items-center justify-center py-3 px-1 border rounded-md font-medium text-[10px] shadow-sm active:scale-95 transition-all ${
+                className={`flex flex-col items-center justify-center min-h-[70px] px-1 border rounded-md font-medium text-[10px] shadow-sm active:scale-95 transition-all ${
                   count === 0 
                     ? 'bg-[#f9f9f9] text-[#ccc] border-[#eee]' 
                     : 'bg-white text-[#444] border-[#ddd] hover:border-[#bbb]'
@@ -223,17 +222,15 @@ if (!currentCategory) {
             );
           })}
 
-          {/* 学習メモ */}
           <a 
             href="https://docs.google.com/document/d/14_XMcn05UAqzPfNN6R-OMmwP5SXNen289CQgthOB9wY/edit?usp=sharing" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="flex flex-col items-center justify-center py-3 px-1 border border-[#ddd] bg-[#fdfdfd] rounded-md font-medium text-[10px] text-[#666] shadow-sm active:scale-95 transition-all"
+            className="flex flex-col items-center justify-center min-h-[70px] px-1 border border-[#ddd] bg-[#fdfdfd] rounded-md font-medium text-[10px] text-[#666] shadow-sm active:scale-95 transition-all"
           >
             <span className="leading-tight">学習メモ</span>
           </a>
 
-          {/* PDFテキスト類 */}
           {[
             { label: "基礎知識", url: "/kiso-text.pdf" },
             { label: "日本 1", url: "/textjapan1.pdf" },
@@ -252,14 +249,14 @@ if (!currentCategory) {
               <button 
                 key={textBtn.label} 
                 onClick={() => isLinked && setViewingPdf(textBtn.url)} 
-                className={`flex flex-col items-center justify-center py-3 px-1 border rounded-md font-medium text-[10px] transition-all ${
+                className={`flex flex-col items-center justify-center min-h-[70px] px-1 border rounded-md font-medium text-[10px] transition-all ${
                   isLinked 
                     ? 'border-[#d1dce5] bg-[#f0f4f8] text-[#5a7b9a] shadow-sm active:scale-95' 
                     : 'border-[#eee] bg-white text-[#ddd] cursor-not-allowed'
                 }`}
               >
                 <span className="leading-tight">{textBtn.label}</span>
-                <span className="text-[8px] opacity-70">テキスト</span>
+                <span className="text-[8px] opacity-70 mt-1">テキスト</span>
               </button>
             );
           })}
@@ -268,7 +265,6 @@ if (!currentCategory) {
     </div>
   );
 }
-
   // 4. クイズ画面・結果画面（ロジック維持）
   const currentCard = cards[currentIndex];
   if (showResult || !currentCard) {
